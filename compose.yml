@@ -1,0 +1,51 @@
+version: '3'
+services:
+     start-laravel-nginx:
+        container_name: "sl-nginx"
+        build:
+            context: ./docker/nginx
+        depends_on:
+            - start-laravel-app
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/src
+
+     start-laravel-app:
+        container_name: "sl-app"
+        build:
+            context: ./docker/php
+        ports:
+          - "5173:5173"
+        depends_on:
+            - start-laravel-mysql
+        volumes:
+            - ./:/src
+            - /src/node_modules
+            - /src/vendor
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+
+     start-laravel-mysql:
+        build:
+          context: ./docker/mysql
+        command: --max_allowed_packet=32505856
+        container_name: "sl-mysql"
+        restart: always
+        volumes:
+          - ./docker/mysql:/docker-entrypoint-initdb.d
+          - ./docker/mysql/lib:/var/lib/mysql
+          - ./docker/mysql/logs:/var/log/database
+        environment:
+            MYSQL_DATABASE: main
+            MYSQL_USER: docker
+            MYSQL_PASSWORD: docker
+            MYSQL_ROOT_PASSWORD: root
+            LC_ALL: "C.UTF-8"
+        ports:
+            - "3306:3306"
+
+     start-laravel-redis:
+        image: redis:alpine
+        container_name: "sl-redis"
+        ports:
+            - "16379:6379"
