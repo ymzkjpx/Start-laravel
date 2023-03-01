@@ -356,7 +356,6 @@ Route::get('/', function () {
 ```
 Access to `http://localhost:8000`
 See the Webpage.
-![image](https://user-images.githubusercontent.com/87993254/221484608-36bf889a-ec2c-4120-a57e-c3019ab371e0.png)
 
 
 ## License
